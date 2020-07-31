@@ -36,6 +36,30 @@ func perfEventOpenTracepoint(id int, progFd int) (*internal.FD, error) {
 	return internal.NewFD(uint32(efd)), nil
 }
 
+func perfEventOpenRawEvent(eventType, eventConfig, eventFreq uint, eventPid, eventCpuId, progFd int) (*internal.FD, error) {
+	attr := unix.PerfEventAttr{
+		Type:        uint32(eventType),
+		Sample_type: unix.PERF_SAMPLE_RAW,
+		Sample:      uint64(eventFreq),
+		Config:      uint64(eventConfig),
+	}
+	attr.Size = uint32(unsafe.Sizeof(attr))
+
+	efd, err := unix.PerfEventOpen(&attr, -1, 0, -1, unix.PERF_FLAG_FD_CLOEXEC)
+	if efd < 0 {
+		return nil, errors.Wrap(err, "perf_event_open error")
+	}
+
+	if _, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(efd), unix.PERF_EVENT_IOC_ENABLE, 0); err != 0 {
+		return nil, errors.Wrap(err, "error enabling perf event")
+	}
+
+	if _, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(efd), unix.PERF_EVENT_IOC_SET_BPF, uintptr(progFd)); err != 0 {
+		return nil, errors.Wrap(err, "error attaching bpf program to perf event")
+	}
+	return internal.NewFD(uint32(efd)), nil
+}
+
 type bpfProgAttachAttr struct {
 	targetFD    uint32
 	attachBpfFD uint32

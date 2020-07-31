@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"unsafe"
 
 	"github.com/florianl/go-tc"
 	"github.com/pkg/errors"
@@ -134,13 +133,19 @@ type Probe struct {
 	tcObject *tc.Object
 
 	// PerfEventSampleFrequency - (perf event) The sample frequency for perf_event
-	PerfEventSampleFrequency uint64
+	PerfEventSampleFrequency uint
 
 	// PerfEventType - (perf event) The sample type for perf_event. ex. unix.PERF_TYPE_HARDWARE, unix.PERF_TYPE_SOFTWARE, PERF_TYPE_HW_CACHE
-	PerfEventType uint32
+	PerfEventType uint
 
 	// PerfEventConfig - (perf event) The sample config for perf_event. ex. unix.PERF_COUNT_HW_CPU_CYCLES, unix.PERF_COUNT_HW_INSTRUCTIONS
-	PerfEventConfig uint64
+	PerfEventConfig uint
+
+	// PerfEventPid - (perf event) The Pid for perf_event.
+	PerfEventPid int
+
+	// PerfEventCpuId - (perf event) The CPU id for perf_event. -1 for all CPUs
+	PerfEventCpuId int
 }
 
 // IdentificationPairMatches - Returns true if the identification pair (probe uid, probe section) match.
@@ -483,33 +488,15 @@ func (p *Probe) attachTracepoint() error {
 // attachPerfEvent - Attaches the probe to its perf event
 func (p *Probe) attachPerfEvent() error {
 	// Parse section
-	if !strings.HasPrefix(p.Section, "perf_event/") {
+	if strings.HasPrefix(p.Section, "perf_event/") == false {
 		// unknown type
 		return errors.Wrapf(ErrSectionFormat, "program type unrecognized in section %v", p.Section)
 	}
 
 	// Hook the eBPF program to the perf event
-	attr := unix.PerfEventAttr{
-		Type:        p.PerfEventType,
-		Sample_type: unix.PERF_SAMPLE_RAW,
-		Sample:      p.PerfEventSampleFrequency,
-		Config:      p.PerfEventConfig,
-	}
-	attr.Size = uint32(unsafe.Sizeof(attr))
-
-	efd, err := unix.PerfEventOpen(&attr, -1, 0, -1, unix.PERF_FLAG_FD_CLOEXEC)
-	if efd < 0 {
-		return errors.Wrap(err, "perf_event_open error")
-	}
-
-	if _, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(efd), unix.PERF_EVENT_IOC_ENABLE, 0); err != 0 {
-		return errors.Wrap(err, "error enabling perf event")
-	}
-
-	if _, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(efd), unix.PERF_EVENT_IOC_SET_BPF, uintptr(p.program.FD())); err != 0 {
-		return errors.Wrap(err, "error attaching bpf program to perf event")
-	}
-	return err
+	var err error
+	p.perfEventFD, err = perfEventOpenRawEvent(p.PerfEventType, p.PerfEventConfig, p.PerfEventSampleFrequency, p.PerfEventPid, p.PerfEventCpuId, p.program.FD())
+	return errors.Wrapf(err, "couldn't enable raw perf event %s", p.Section)
 }
 
 // attachUprobe - Attaches the probe to its Uprobe
