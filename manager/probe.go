@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unsafe"
 
 	"github.com/florianl/go-tc"
 	"github.com/pkg/errors"
@@ -131,6 +132,15 @@ type Probe struct {
 	// tcObject - (TC classifier) TC object created when the classifier was attached. It will be reused to delete it on
 	// exit.
 	tcObject *tc.Object
+
+	// PerfEventSampleFrequency - (perf event) The sample frequency for perf_event
+	PerfEventSampleFrequency uint64
+
+	// PerfEventType - (perf event) The sample type for perf_event. ex. unix.PERF_TYPE_HARDWARE, unix.PERF_TYPE_SOFTWARE, PERF_TYPE_HW_CACHE
+	PerfEventType uint32
+
+	// PerfEventConfig - (perf event) The sample config for perf_event. ex. unix.PERF_COUNT_HW_CPU_CYCLES, unix.PERF_COUNT_HW_INSTRUCTIONS
+	PerfEventConfig uint64
 }
 
 // IdentificationPairMatches - Returns true if the identification pair (probe uid, probe section) match.
@@ -283,6 +293,8 @@ func (p *Probe) Attach() error {
 		err = p.attachKprobe()
 	case ebpf.TracePoint:
 		err = p.attachTracepoint()
+	case ebpf.PerfEvent:
+		err = p.attachPerfEvent()
 	case ebpf.CGroupDevice, ebpf.CGroupSKB, ebpf.CGroupSock, ebpf.CGroupSockAddr, ebpf.CGroupSockopt, ebpf.CGroupSysctl:
 		err = p.attachCGroup()
 	case ebpf.SocketFilter:
@@ -466,6 +478,38 @@ func (p *Probe) attachTracepoint() error {
 	// Hook the eBPF program to the tracepoint
 	p.perfEventFD, err = perfEventOpenTracepoint(tracepointID, p.program.FD())
 	return errors.Wrapf(err, "couldn't enable tracepoint %s", p.Section)
+}
+
+// attachPerfEvent - Attaches the probe to its perf event
+func (p *Probe) attachPerfEvent() error {
+	// Parse section
+	if !strings.HasPrefix(p.Section, "perf_event/") {
+		// unknown type
+		return errors.Wrapf(ErrSectionFormat, "program type unrecognized in section %v", p.Section)
+	}
+
+	// Hook the eBPF program to the perf event
+	attr := unix.PerfEventAttr{
+		Type:        p.PerfEventType,
+		Sample_type: unix.PERF_SAMPLE_RAW,
+		Sample:      p.PerfEventSampleFrequency,
+		Config:      p.PerfEventConfig,
+	}
+	attr.Size = uint32(unsafe.Sizeof(attr))
+
+	efd, err := unix.PerfEventOpen(&attr, -1, 0, -1, unix.PERF_FLAG_FD_CLOEXEC)
+	if efd < 0 {
+		return errors.Wrap(err, "perf_event_open error")
+	}
+
+	if _, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(efd), unix.PERF_EVENT_IOC_ENABLE, 0); err != 0 {
+		return errors.Wrap(err, "error enabling perf event")
+	}
+
+	if _, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(efd), unix.PERF_EVENT_IOC_SET_BPF, uintptr(p.program.FD())); err != 0 {
+		return errors.Wrap(err, "error attaching bpf program to perf event")
+	}
+	return err
 }
 
 // attachUprobe - Attaches the probe to its Uprobe
