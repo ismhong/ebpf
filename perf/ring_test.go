@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/DataDog/ebpf/internal/unix"
+	"github.com/ismhong/ebpf/internal/unix"
 )
 
 func TestRingBufferReader(t *testing.T) {

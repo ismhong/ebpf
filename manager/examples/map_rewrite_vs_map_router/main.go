@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DataDog/ebpf/manager"
+	"github.com/ismhong/ebpf/manager"
 	"github.com/sirupsen/logrus"
 )
 

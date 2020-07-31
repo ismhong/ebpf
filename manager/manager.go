@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/sys/unix"
 
-	"github.com/DataDog/ebpf"
+	"github.com/ismhong/ebpf"
 )
 
 // ConstantEditor - A constant editor tries to rewrite the value of a constant in a compiled eBPF program.

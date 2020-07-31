@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/DataDog/ebpf"
+	"github.com/ismhong/ebpf"
 	"io"
 	"os"
 	"unsafe"

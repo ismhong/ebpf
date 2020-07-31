@@ -13,8 +13,8 @@ import (
 	"github.com/vishvananda/netlink"
 	"golang.org/x/sys/unix"
 
-	"github.com/DataDog/ebpf"
-	"github.com/DataDog/ebpf/internal"
+	"github.com/ismhong/ebpf"
+	"github.com/ismhong/ebpf/internal"
 )
 
 // XdpAttachMode selects a way how XDP program will be attached to interface

@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/DataDog/ebpf"
+	"github.com/ismhong/ebpf"
 	"github.com/sirupsen/logrus"
 
-	"github.com/DataDog/ebpf/manager"
+	"github.com/ismhong/ebpf/manager"
 )
 
 type TestData struct {

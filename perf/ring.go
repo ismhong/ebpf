@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"unsafe"
 
-	"github.com/DataDog/ebpf/internal/unix"
+	"github.com/ismhong/ebpf/internal/unix"
 
 	"golang.org/x/xerrors"
 )

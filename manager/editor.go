@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/DataDog/ebpf/asm"
+	"github.com/ismhong/ebpf/asm"
 )
 
 // Editor modifies eBPF instructions.

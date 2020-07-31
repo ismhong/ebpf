@@ -4,7 +4,7 @@ import (
 	"flag"
 	"github.com/sirupsen/logrus"
 
-	"github.com/DataDog/ebpf/manager"
+	"github.com/ismhong/ebpf/manager"
 )
 
 var m = &manager.Manager{

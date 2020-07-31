@@ -3,8 +3,8 @@ package ebpf
 import (
 	"testing"
 
-	"github.com/DataDog/ebpf/asm"
-	"github.com/DataDog/ebpf/internal/testutils"
+	"github.com/ismhong/ebpf/asm"
+	"github.com/ismhong/ebpf/internal/testutils"
 )
 
 func TestCollectionSpecNotModified(t *testing.T) {

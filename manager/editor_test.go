@@ -5,8 +5,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/DataDog/ebpf"
-	"github.com/DataDog/ebpf/asm"
+	"github.com/ismhong/ebpf"
+	"github.com/ismhong/ebpf/asm"
 )
 
 // ExampleEditor_rewriteConstant shows how to change constants in

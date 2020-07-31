@@ -1,14 +1,14 @@
 package manager
 
 import (
-	"github.com/DataDog/ebpf"
+	"github.com/ismhong/ebpf"
 	"golang.org/x/sys/unix"
 	"syscall"
 	"unsafe"
 
 	"github.com/pkg/errors"
 
-	"github.com/DataDog/ebpf/internal"
+	"github.com/ismhong/ebpf/internal"
 )
 
 func perfEventOpenTracepoint(id int, progFd int) (*internal.FD, error) {

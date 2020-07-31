@@ -14,10 +14,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/ebpf/asm"
-	"github.com/DataDog/ebpf/internal"
-	"github.com/DataDog/ebpf/internal/testutils"
-	"github.com/DataDog/ebpf/internal/unix"
+	"github.com/ismhong/ebpf/asm"
+	"github.com/ismhong/ebpf/internal"
+	"github.com/ismhong/ebpf/internal/testutils"
+	"github.com/ismhong/ebpf/internal/unix"
 	"golang.org/x/xerrors"
 )
 

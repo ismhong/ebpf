@@ -11,9 +11,9 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/DataDog/ebpf/internal"
-	"github.com/DataDog/ebpf/internal/testutils"
-	"github.com/DataDog/ebpf/internal/unix"
+	"github.com/ismhong/ebpf/internal"
+	"github.com/ismhong/ebpf/internal/testutils"
+	"github.com/ismhong/ebpf/internal/unix"
 
 	"golang.org/x/xerrors"
 )

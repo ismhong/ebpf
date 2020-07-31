@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/DataDog/ebpf"
+	"github.com/ismhong/ebpf"
 )
 
 var program = [...]byte{

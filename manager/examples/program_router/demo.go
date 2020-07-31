@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"time"
 
-	"github.com/DataDog/ebpf/manager"
+	"github.com/ismhong/ebpf/manager"
 )
 
 func demoTailCall() error {

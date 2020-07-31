@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/DataDog/ebpf/internal"
+	"github.com/ismhong/ebpf/internal"
 
 	"golang.org/x/xerrors"
 )

@@ -5,8 +5,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/DataDog/ebpf"
-	"github.com/DataDog/ebpf/perf"
+	"github.com/ismhong/ebpf"
+	"github.com/ismhong/ebpf/perf"
 )
 
 // PerfMapOptions - Perf map specific options

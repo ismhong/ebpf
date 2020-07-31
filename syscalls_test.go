@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DataDog/ebpf/internal/testutils"
-	"github.com/DataDog/ebpf/internal/unix"
+	"github.com/ismhong/ebpf/internal/testutils"
+	"github.com/ismhong/ebpf/internal/unix"
 )
 
 func TestObjNameCharacters(t *testing.T) {

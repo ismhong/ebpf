@@ -11,9 +11,9 @@ import (
 	"time"
       "strings"
 
-	"github.com/DataDog/ebpf"
-	"github.com/DataDog/ebpf/asm"
-	"github.com/DataDog/ebpf/perf"
+	"github.com/ismhong/ebpf"
+	"github.com/ismhong/ebpf/asm"
+	"github.com/ismhong/ebpf/perf"
 
 	"golang.org/x/sys/unix"
 )

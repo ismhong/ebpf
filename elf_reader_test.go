@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DataDog/ebpf/internal"
-	"github.com/DataDog/ebpf/internal/testutils"
+	"github.com/ismhong/ebpf/internal"
+	"github.com/ismhong/ebpf/internal/testutils"
 )
 
 func TestLoadCollectionSpec(t *testing.T) {

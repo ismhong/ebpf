@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/DataDog/ebpf"
+	"github.com/ismhong/ebpf"
 )
 
 // MapCleanupType - The map clean up type defines how the maps of a manager should be cleaned up on exit.

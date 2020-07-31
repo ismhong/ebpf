@@ -10,8 +10,8 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/DataDog/ebpf/internal"
-	"github.com/DataDog/ebpf/internal/unix"
+	"github.com/ismhong/ebpf/internal"
+	"github.com/ismhong/ebpf/internal/unix"
 
 	"golang.org/x/xerrors"
 )

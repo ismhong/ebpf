@@ -4,8 +4,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/DataDog/ebpf"
-	"github.com/DataDog/ebpf/manager"
+	"github.com/ismhong/ebpf"
+	"github.com/ismhong/ebpf/manager"
 )
 
 func demoMapEditor() error {
