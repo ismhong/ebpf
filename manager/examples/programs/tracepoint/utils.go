@@ -11,7 +11,7 @@ import (
 
 // recoverAssets - Recover ebpf asset
 func recoverAssets() io.ReaderAt {
-	buf, err := Asset("/probe.o")
+	buf, err := Asset("probe.o")
 	if err != nil {
 		logrus.Fatal(errors.Wrap(err, "couldn't find asset"))
 	}
@@ -33,4 +33,3 @@ func trigger() error {
 	logrus.Printf("removing %v", tmpDir)
 	return os.RemoveAll(tmpDir)
 }
-
