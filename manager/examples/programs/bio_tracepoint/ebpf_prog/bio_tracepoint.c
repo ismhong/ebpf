@@ -13,6 +13,19 @@
 // 16 buckets per disk in kib, max range is 16mib .. 32mib
 #define MAX_SIZE_SLOT (15)
 
+// function for device information from blkdev.h
+#define MINORBITS	20
+#define MINORMASK	((1U << MINORBITS) - 1)
+#define MAJOR(dev)	((__u32) ((dev) >> MINORBITS))
+#define MINOR(dev)	((__u32) ((dev) & MINORMASK))
+
+static inline __u32 new_encode_dev(__u32 dev)
+{
+	__u32 major = MAJOR(dev);
+	__u32 minor = MINOR(dev);
+	return (minor & 0xff) | (major << 8) | ((minor & ~0xff) << 12);
+}
+
 struct block_rq_issue_args {
     __u16 common_type;
     __u8 common_flags;
@@ -145,7 +158,7 @@ int block_rq_complete(struct block_rq_complete_args *args) {
 
     struct disk_key latency_key = {};
     latency_key.slot = latency_slot;
-    latency_key.dev = entry.dev;
+    latency_key.dev = new_encode_dev(entry.dev);
 
     // Size in kibibytes
     __u64 size_kib = entry_val->bytes / 1024;
@@ -160,7 +173,7 @@ int block_rq_complete(struct block_rq_complete_args *args) {
 
     struct disk_key size_key = {};
     size_key.slot = size_slot;
-    size_key.dev = entry.dev;
+    size_key.dev = new_encode_dev(entry.dev);
     if (rwbs[0] == 'W' || rwbs[0] == 'S' || rwbs[0] == 'F' || rwbs[1] == 'W' || rwbs[1] == 'S' || rwbs[1] == 'F') {
         latency_key.op = 2;
         size_key.op    = 2;
