@@ -215,7 +215,7 @@ int block_rq_complete(struct block_rq_complete_args *args) {
     }
     bpf_map_update_elem(&io_size, &size_key, &new_size_val, 0);
 
-    bpf_printk("block_rq_complete op->%d size->%dkib latency->%d\n", size_key.op, size_kib, delta);
+    bpf_printk("block_rq_complete op->%d size->%d kib latency->%d ns\n", size_key.op, size_kib, delta);
 
 cleanup:
     bpf_map_delete_elem(&start_record, &entry);

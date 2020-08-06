@@ -45,7 +45,7 @@ func perfEventOpenRawEvent(eventType, eventConfig, eventFreq uint, eventPid, eve
 	}
 	attr.Size = uint32(unsafe.Sizeof(attr))
 
-	efd, err := unix.PerfEventOpen(&attr, -1, 0, -1, unix.PERF_FLAG_FD_CLOEXEC)
+	efd, err := unix.PerfEventOpen(&attr, eventPid, eventCpuId, -1, unix.PERF_FLAG_FD_CLOEXEC)
 	if efd < 0 {
 		return nil, errors.Wrap(err, "perf_event_open error")
 	}
