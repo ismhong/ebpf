@@ -57,7 +57,7 @@ type Probe struct {
 	manager          *Manager
 	program          *ebpf.Program
 	programSpec      *ebpf.ProgramSpec
-	perfEventFD      *internal.FD
+	perfEventFD      []*internal.FD
 	state            state
 	stateLock        *sync.RWMutex
 	manualLoadNeeded bool
@@ -351,7 +351,9 @@ func (p *Probe) detach() error {
 
 	// Shared with all probes: close the perf event file descriptor
 	if p.perfEventFD != nil {
-		err = p.perfEventFD.Close()
+		for _, eventFD := range p.perfEventFD {
+			err = eventFD.Close()
+		}
 	}
 
 	// Per program type cleanup
