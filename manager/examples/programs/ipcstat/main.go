@@ -18,12 +18,16 @@ var m = &manager.Manager{
 			PerfEventType:            unix.PERF_TYPE_HARDWARE,
 			PerfEventConfig:          unix.PERF_COUNT_HW_INSTRUCTIONS,
 			PerfEventSampleFrequency: 99,
+			PerfEventCpuId:           -1,
+			PerfEventPid:             -1,
 		},
 		&manager.Probe{
 			Section:                  "perf_event/on_cpu_cycle",
 			PerfEventType:            unix.PERF_TYPE_HARDWARE,
 			PerfEventConfig:          unix.PERF_COUNT_HW_CPU_CYCLES,
 			PerfEventSampleFrequency: 99,
+			PerfEventCpuId:           -1,
+			PerfEventPid:             -1,
 		},
 	},
 }
