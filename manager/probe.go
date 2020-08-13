@@ -133,7 +133,10 @@ type Probe struct {
 	tcObject *tc.Object
 
 	// PerfEventSampleFrequency - (perf event) The sample frequency for perf_event
-	PerfEventSampleFrequency uint
+	PerfEventSampleFrequency uint64
+
+	// PerfEventSamplePeriod - (perf event) The sample period for perf_event
+	PerfEventSamplePeriod uint64
 
 	// PerfEventType - (perf event) The sample type for perf_event. ex. unix.PERF_TYPE_HARDWARE, unix.PERF_TYPE_SOFTWARE, PERF_TYPE_HW_CACHE
 	PerfEventType uint
@@ -497,7 +500,7 @@ func (p *Probe) attachPerfEvent() error {
 
 	// Hook the eBPF program to the perf event
 	var err error
-	p.perfEventFD, err = perfEventOpenRawEvent(p.PerfEventType, p.PerfEventConfig, p.PerfEventSampleFrequency, p.PerfEventPid, p.PerfEventCpuId, p.program.FD())
+	p.perfEventFD, err = perfEventOpenRawEvent(p.PerfEventType, p.PerfEventConfig, p.PerfEventSampleFrequency, p.PerfEventSamplePeriod, p.PerfEventPid, p.PerfEventCpuId, p.program.FD())
 	return errors.Wrapf(err, "couldn't enable raw perf event %s", p.Section)
 }
 

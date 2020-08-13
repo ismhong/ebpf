@@ -39,14 +39,22 @@ func perfEventOpenTracepoint(id int, progFd int) ([]*internal.FD, error) {
 	return retEventFD, nil
 }
 
-func perfEventOpenRawEvent(eventType, eventConfig, eventFreq uint, eventPid, eventCpuId, progFd int) ([]*internal.FD, error) {
+func perfEventOpenRawEvent(eventType, eventConfig uint, eventFreq, eventPeriod uint64, eventPid, eventCpuId, progFd int) ([]*internal.FD, error) {
 	retEventFD := []*internal.FD{}
 
 	attr := unix.PerfEventAttr{
 		Type:        uint32(eventType),
 		Sample_type: unix.PERF_SAMPLE_RAW,
-		Sample:      uint64(eventFreq),
 		Config:      uint64(eventConfig),
+	}
+	if eventFreq != 0 {
+		attr.Sample = eventFreq
+		attr.Bits |= 1 << 10 // use frequency, not period
+	} else if eventPeriod != 0 {
+		attr.Sample = eventPeriod
+	} else {
+		var err error
+		return nil, errors.Wrap(err, "perf_event_open error, need assign period or frequency")
 	}
 	attr.Size = uint32(unsafe.Sizeof(attr))
 

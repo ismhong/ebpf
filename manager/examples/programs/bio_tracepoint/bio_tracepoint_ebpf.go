@@ -92,7 +92,7 @@ func bio_tracepointElf() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bio_tracepoint.elf", size: 5120, mode: os.FileMode(420), modTime: time.Unix(1596591470, 0)}
+	info := bindataFileInfo{name: "bio_tracepoint.elf", size: 5120, mode: os.FileMode(420), modTime: time.Unix(1597048619, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
