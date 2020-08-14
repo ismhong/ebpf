@@ -311,6 +311,8 @@ func (p *Probe) Attach() error {
 		err = p.attachTCCLS()
 	case ebpf.XDP:
 		err = p.attachXDP()
+	case ebpf.RawTracepoint:
+		err = p.attachRawTracepoint()
 	default:
 		err = fmt.Errorf("program type %s not implemented yet", p.programSpec.Type)
 	}
@@ -488,6 +490,24 @@ func (p *Probe) attachTracepoint() error {
 	// Hook the eBPF program to the tracepoint
 	p.perfEventFD, err = perfEventOpenTracepoint(tracepointID, p.program.FD())
 	return errors.Wrapf(err, "couldn't enable tracepoint %s", p.Section)
+}
+
+// attachRawTracepoint - Attaches the probe to its raw tracepoint
+func (p *Probe) attachRawTracepoint() error {
+	// Parse section
+	traceGroup := strings.SplitN(p.Section, "/", 2)
+	if len(traceGroup) != 2 {
+		return errors.Wrapf(ErrSectionFormat, "expected SEC(\"raw_tracepoint/[name]\") got %s", p.Section)
+	}
+	name := traceGroup[1]
+
+	// Use bpf systemcall to open raw tracepoint
+	err := bpfRawTracepointOpen(p.program.FD(), name)
+	if err != nil {
+		return errors.Wrapf(err, "couldn't open raw tracepoint %s", p.Section)
+	}
+
+	return nil
 }
 
 // attachPerfEvent - Attaches the probe to its perf event

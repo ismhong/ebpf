@@ -88,6 +88,11 @@ func perfEventOpenRawEvent(eventType, eventConfig uint, eventFreq, eventPeriod u
 	return retEventFD, nil
 }
 
+type bpfRawTracepointAttr struct {
+	name    uint64
+	prog_fd uint32
+}
+
 type bpfProgAttachAttr struct {
 	targetFD    uint32
 	attachBpfFD uint32
@@ -96,9 +101,28 @@ type bpfProgAttachAttr struct {
 }
 
 const (
-	_ProgAttach = 8
-	_ProgDetach = 9
+	_ProgAttach        = 8
+	_ProgDetach        = 9
+	_RawTracepointOpen = 17
 )
+
+func bpfRawTracepointOpen(progFd int, functionName string) error {
+	attachPoint := []byte(functionName)
+	attachPoint = append(attachPoint, 0)
+
+	attr := bpfRawTracepointAttr{
+		name:    uint64((*(*uintptr)(unsafe.Pointer(&attachPoint)))),
+		prog_fd: uint32(progFd),
+	}
+
+	// Use bpf systemcall to open raw tracepoint
+	_, err := internal.BPF(_RawTracepointOpen, unsafe.Pointer(&attr), unsafe.Sizeof(attr))
+	if err != nil {
+		return errors.Wrapf(err, "couldn't open raw tracepoint %s", functionName)
+	}
+
+	return nil
+}
 
 func bpfProgAttach(progFd int, targetFd int, attachType ebpf.AttachType) (int, error) {
 	attr := bpfProgAttachAttr{
